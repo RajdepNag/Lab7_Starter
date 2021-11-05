@@ -26,8 +26,8 @@ const router = new Router(function () {
    * If you did this right, you should see the recipe cards just like last lab
    */
 
-  this.document.querySelector('section.section--recipe-cards').classList.add('shown');
-  this.document.querySelector('section.section--recipe-expand').classList.remove('shown');
+  document.querySelector('section.section--recipe-cards').classList.add('shown');
+  document.querySelector('section.section--recipe-expand').classList.remove('shown');
   
 
 
@@ -191,8 +191,9 @@ function bindEscKey() {
    * if the escape key is pressed, use your router to navigate() to the 'home'
    * page. This will let us go back to the home page from the detailed page.
    */
-  document.addEventListener('keydown', (e) => {
-    if (e.key == 27) {
+  document.addEventListener("keydown", event => {
+
+    if (event.key === "Escape") {
       router.navigate('home');
     }
 
@@ -222,8 +223,10 @@ function bindPopstate() {
   window.addEventListener('popstate', (event) => {
 
     if(event.state) {
-      navigate(event.state, true);
+      router.navigate(event.state);
     }
+    else 
+      router.navigate('home', true);
   })
 
 }

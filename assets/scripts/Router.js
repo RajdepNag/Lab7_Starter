@@ -68,7 +68,7 @@ export class Router {
      *  4. Finally, call the stored function for the given page
      */
 
-    if(this[page] == null) {
+    if(!this[page]) {
 
       console.log(`ERROR: ${page} doesn't exist.`);
       return;
@@ -78,7 +78,7 @@ export class Router {
     let hash;
 
     if( page == 'home') {
-l̥ō
+
       hash = '';
       
 
@@ -87,18 +87,17 @@ l̥ō
     else {
 
       hash = '#' + page;
+      //console.log(hash);
 
     }//2
 
-    if ( statePopped == false && !(window.location.hash == hash) ) {
+    if (!(statePopped) && window.location.hash != hash) {
 
-      history.pushState(page, '', window.location.href + hash);
+        window.history.pushState(page, '', window.location.origin + hash);
 
     }//3
 
-    //document.createElement('recipe-expand');
-
-    this[page];//4
+    this[page]();//4
 
   }
 }
