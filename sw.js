@@ -9,6 +9,29 @@ self.addEventListener('install', function (event) {
    * TODO - Part 2 Step 2
    * Create a function as outlined above
    */
+
+   let CACHE_NAME = 'SPA-cache-v1';
+   let urlsToCache = [
+     'assets/styles/main.css',
+     'assets/components/RecipeCard.js',
+     'assets/components/RecipeExpand.js',
+     '/scripts/main.js',
+     '/scripts/Router.js'
+   ];
+   
+   self.addEventListener('install', function(event) {
+     // Perform install steps
+     event.waitUntil(
+       caches.open(CACHE_NAME)
+         .then(function(cache) {
+           console.log('Opened cache');
+           return cache.addAll(urlsToCache);
+         })
+     );
+   });
+
+
+
 });
 
 /**
@@ -21,6 +44,29 @@ self.addEventListener('activate', function (event) {
    * TODO - Part 2 Step 3
    * Create a function as outlined above, it should be one line
    */
+
+   self.addEventListener('activate', function(event) {
+
+    var cacheAllowlist = ['pages-cache-v1', 'blog-posts-cache-v1'];
+   
+    self.addEventListener('activate', event => {
+      event.waitUntil(clients.claim());
+    });
+    
+  
+    event.waitUntil(
+      caches.keys().then(function(cacheNames) {
+        return Promise.all(
+          cacheNames.map(function(cacheName) {
+            if (cacheAllowlist.indexOf(cacheName) === -1) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+    );
+  });
+
 });
 
 // Intercept fetch requests and store them in the cache
@@ -29,4 +75,34 @@ self.addEventListener('fetch', function (event) {
    * TODO - Part 2 Step 4
    * Create a function as outlined above
    */
+
+   self.addEventListener('fetch', function(event) {
+    event.respondWith(
+      caches.match(event.request)
+        .then(function(response) {
+          // Cache hit - return response
+          if (response) {
+            return response;
+          }
+  
+          return fetch(event.request).then(
+            function(response) {
+              // Check if we received a valid response
+              if(!response || response.status !== 200 || response.type !== 'basic') {
+                return response;
+              }
+  
+              let responseToCache = response.clone();
+  
+              caches.open(CACHE_NAME)
+                .then(function(cache) {
+                  cache.put(event.request, responseToCache);
+                });
+  
+              return response;
+            }
+          );
+        })
+      );
+  });
 });

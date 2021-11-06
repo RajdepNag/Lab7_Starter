@@ -98,6 +98,7 @@ export class Router {
     }//3
 
     this[page]();//4
+    
 
   }
 }
